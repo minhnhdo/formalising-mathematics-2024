@@ -74,22 +74,24 @@ Note that `norm_num` can work with `|x|` if `x` is a numeral like 37,
 but it can't do anything with it if it's a variable.
 -/
 /-- The limit of the constant sequence with value 37 is 37. -/
-theorem tendsTo_thirtyseven : TendsTo (fun n ↦ 37) 37 :=
+theorem tendsTo_thirtyseven : TendsTo (fun _ ↦ 37) 37 :=
   by
   rw [tendsTo_def]
   intro ε hε
   use 100
-  intro n hn
+  intro n
+  intro _
   norm_num
   exact hε
 
 /-- The limit of the constant sequence with value `c` is `c`. -/
-theorem tendsTo_const (c : ℝ) : TendsTo (fun n ↦ c) c :=
+theorem tendsTo_const (c : ℝ) : TendsTo (fun _ ↦ c) c :=
   by
   intro ε hε
   dsimp only
   use 37
-  intro n hn
+  intro n
+  intro
   ring_nf
   norm_num
   exact hε
@@ -104,7 +106,15 @@ theorem tendsTo_add_const {a : ℕ → ℝ} {t : ℝ} (c : ℝ) (h : TendsTo a t
   -- a `forall` hypothesis to specific values.
   -- Look up the explanations of these tactics in Part C
   -- of the course notes.  rw [tendsTo_def] at h ⊢
-  sorry
+  intro ε hε
+  apply h at ε
+  apply ε at hε
+  cases' hε with w hw
+  use w
+  intro n hn
+  apply hw n at hn
+  ring_nf
+  exact hn
 
 -- you're not quite ready for this one yet though.
 /-- If `a(n)` tends to `t` then `-a(n)` tends to `-t`.  -/
